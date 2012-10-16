@@ -13,7 +13,17 @@ describe("Sign Up form", function(){
 	afterEach(function(){
 	});
 
-	it("should validate presence of name field", function(){
+	describe("Validations", function(){
 		
+		it("should validate presence of name field", function(){
+			var nameInput = $("input#name");
+			bindValidationsForForm();
+			nameInput.val(" ").trigger("blur");
+			expect($("form#signup-form").hasClass("error")).toBeTruthy();
+		});	
+
+
+
 	});
+	
 });
