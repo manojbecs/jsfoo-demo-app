@@ -1,13 +1,6 @@
 describe("Sign Up form", function(){
 	beforeEach(function(){
-		/*:DOC += <!DOCTYPE html>
-		<form id='signup-form' action="/" method="post" class="form-horizontal">
-	    	<input id="name" name='name' type='text'></input>
-        	<input id="email" name='email' type='text'></input>
-        	<input id="password" name='password' type='password'></input>    
-        	<button class='btn btn-primary' type='submit'>Sign Up</button>
-   		</form>
-   		*/
+		loadFormFixture();
 	});
 
 	afterEach(function(){
@@ -20,9 +13,24 @@ describe("Sign Up form", function(){
 			bindValidationsForForm();
 			nameInput.val(" ").trigger("blur");
 			expect($("form#signup-form").hasClass("error")).toBeTruthy();
+			expect(nameInput.hasClass("error")).toBeTruthy();
 		});	
 
+		it("should validate the uniqueness of email field", function(){
+			var server = sinon.fakeServer.create();
+           	server.respondWith('GET', "/user/validate", [422, {'Content-Type': 'application/json'}, "{email: 'Already present'}"]);
 
+			var emailInput = $("input#email");
+			bindValidationsForForm();
+			emailInput.val("sample@email.com").trigger("blur");
+
+			server.respond();
+
+			expect($("form#signup-form").hasClass("error")).toBeTruthy();
+			expect(emailInput.hasClass("error")).toBeTruthy();
+
+			server.restore();
+		});
 
 	});
 	
